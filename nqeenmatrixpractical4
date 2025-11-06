@@ -1,0 +1,73 @@
+//Design an N-Queens matrix with the first Queen placed, then use backtracking to place the remaining Queens and generate the final matrix.
+import java.util.Scanner;
+
+public class NQueens {
+
+    static int N;
+    static int[][] board;
+
+    // Check if it's safe to place a queen at board[row][col]
+    static boolean isSafe(int row, int col) {
+        // Check column
+        for (int i = 0; i < row; i++)
+            if (board[i][col] == 1) return false;
+
+        // Check upper-left diagonal
+        for (int i = row - 1, j = col - 1; i >= 0 && j >= 0; i--, j--)
+            if (board[i][j] == 1) return false;
+
+        // Check upper-right diagonal
+        for (int i = row - 1, j = col + 1; i >= 0 && j < N; i--, j++)
+            if (board[i][j] == 1) return false;
+
+        return true;
+    }
+
+    // Backtracking function to place queens from row onward
+    static boolean solve(int row) {
+        if (row == N) return true;
+
+        for (int col = 0; col < N; col++) {
+            if (board[row][col] == 0 && isSafe(row, col)) {
+                board[row][col] = 1;
+                if (solve(row + 1)) return true;
+                board[row][col] = 0; // Backtrack
+            }
+        }
+        return false;
+    }
+
+    // Display the board
+    static void printBoard() {
+        for (int[] row : board) {
+            for (int cell : row) {
+                System.out.print((cell == 1 ? "Q " : ". "));
+            }
+            System.out.println();
+        }
+    }
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.print("Enter the size of the board (N): ");
+        N = scanner.nextInt();
+        board = new int[N][N];
+
+        System.out.print("Enter the row index of the first queen (0 to " + (N - 1) + "): ");
+        int firstRow = scanner.nextInt();
+        System.out.print("Enter the column index of the first queen (0 to " + (N - 1) + "): ");
+        int firstCol = scanner.nextInt();
+
+        board[firstRow][firstCol] = 1;
+
+        if (solve(0)) {
+            System.out.println("\nFinal N-Queens Matrix:");
+            printBoard();
+        } else {
+            System.out.println("No solution exists with the given first queen position.");
+        }
+
+        scanner.close();
+    }
+}
